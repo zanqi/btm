@@ -1,0 +1,22 @@
+MODEL_FOLDER_NAME=project_name;
+NUM_GPUS=16;
+ARCHITECTURE=transformer_lm_gpt3_small;
+DATA_FOLDER=/path/to/data;
+DATA_DOMAIN_NAME=data_domain_name;
+SAVE_MODEL_FOLDER=/path/to/new/modelcheckpointing;
+NUM_UPDATES=80000;
+UPDATE_FREQ=32;
+LR=5e-4;
+SAVE_INTERVAL_UPDATES=2000;
+PORT=55555;
+WANDB_PROJECT=project_name;
+BTM_CODE_PATH=./;
+RANDOM_SEED=1;
+UNIQUE_RUN_ID=unique_run_name;
+
+cd $BTM_CODE_PATH;
+bash btm_shell_scripts/btm_train.sh $MODEL_FOLDER_NAME $NUM_GPUS \
+    $ARCHITECTURE dense $DATA_FOLDER $DATA_DOMAIN_NAME None \
+    $SAVE_MODEL_FOLDER None None None False \
+    $NUM_UPDATES $UPDATE_FREQ $LR $SAVE_INTERVAL_UPDATES $PORT \
+    $WANDB_PROJECT $BTM_CODE_PATH $RANDOM_SEED $UNIQUE_RUN_ID ;

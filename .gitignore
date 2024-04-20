@@ -1,1 +1,6 @@
 btm_internal/
+.env/
+TinyStories/
+__pycache__/
+TinyStories_all_data.tar.gz
+*.so
