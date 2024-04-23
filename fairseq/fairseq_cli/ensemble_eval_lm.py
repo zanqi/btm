@@ -102,8 +102,11 @@ def evaluate(models, sample, device, gen_timer, scorer, bpe_toks, output_word_pr
         score_sum += pos_scores.sum().cpu()
         count += pos_scores.numel() - skipped_toks
         if hypo['expert_probs'] is not None:
+            # hypo['expert_probs'].shape = (1, num_experts, tgt_len)
             expert_ps = hypo['expert_probs'].mean(1).unsqueeze(0).cpu().numpy()
+            # expert_ps shape = (1, num_experts)
             expert_probs.append(expert_ps)
+            # expert_probs shape = (num_samples, 1, num_experts)
 
         if output_word_probs or output_word_stats:
             w = ""
@@ -143,7 +146,9 @@ def evaluate(models, sample, device, gen_timer, scorer, bpe_toks, output_word_pr
                 )
     if expert_probs:
         expert_probs = np.concatenate(expert_probs, 0)
+        # expert_probs shape = (num_samples, num_experts, tgt_len)
         expert_probs = np.expand_dims(expert_probs.mean(0), 0)
+        # expert_probs shape = (1, num_experts, tgt_len)
     else:
         expert_probs = None
     ppl = 2 ** (-score_sum / count / math.log(2) if count > 0 else 0)
@@ -264,6 +269,9 @@ def dynamic_eval_lm(
         if not sample or "net_input" not in sample:
             continue
         target_score_sum_, target_count_, _, expert_probs = evaluate(models, sample, device, gen_timer, scorer, bpe_toks, output_word_probs, output_word_stats, remove_bos_token=remove_bos_token, ensemble_type=ensemble_type, prior=prior)
+        # target_score_sum_.shape = (1,)
+        # target_count_.shape = (1,)
+        # expert_probs.shape = (1, num_experts)
         target_score_sum += target_score_sum_
         target_count += target_count_
         target_ppl = 2 ** (-target_score_sum / target_count / math.log(2) if target_count > 0 else 0)
